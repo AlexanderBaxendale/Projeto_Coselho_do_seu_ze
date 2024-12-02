@@ -1,36 +1,53 @@
 import requests
 from deep_translator import GoogleTranslator
 from loguru import logger
-r = requests.get('https://api.adviceslip.com/advice')
 
 
-print(r.json()['slip']['id'])
-print("-------------------------------")
-print(r.json()['slip']['advice'])
-print("-------------------------------")
 
-def conselhos_do_zé():
+
+def obter_conselho():
+
+    r = requests.get('https://api.adviceslip.com/advice')
+    if r.status_code == 200:
+        return r.json()['slip']['advice']
+    else:
+        return "Erro ao obter conselho"
+
+if __name__== '__main__':
+    obter_conselho()
+
+
+
+def numero_de_conselhos():
 
     tradutor = GoogleTranslator(source="en", target= "pt")
-    conselho = (r.json()['slip']['advice'])
+    try:
+        quantidade = int(input('Quantos conselhos você quer?:'))
+        if quantidade <= 0:
+            print('Digite um número positivo')
+            return
+    except ValueError:
+        print('Digite uma Número válido!')
+        return
+    
+    for i in range(quantidade):
+        print(f'conselho {i+1} : {tradutor.translate(obter_conselho())}')
+if __name__ == '__main__':
+    numero_de_conselhos()
 
-    traducao_conselho = tradutor.translate(conselho)
-    print(traducao_conselho)
+
+
+def guarda_conselho():
+    
+    gera_conselho= requests.get('https://api.adviceslip.com/advice')      
+    try:
+        gera_conselho == 200
+        return numero_de_conselhos()
+    except ValueError as error:
+        logger.exception(f'Error:{error}')
+    
+    with open('Conselhos.txt', 'w', encoding='UTF-8') as conselhos_salvo:
+        conselhos_salvo.write(gera_conselho.text)
 
 if __name__ == '__main__':
-    conselhos_do_zé()
-
-print('\n--------Tela de quantidades-------\n')
-
-numeros_conselho = int(input('Quantos conselhos você quer?'))
-
-
-def quantidade_conselhos():
-    while numeros_conselho:
-        if numeros_conselho >= 1:
-            break
-if __name__ == "__main__":
-    quantidade_conselhos()
-
-
-    
+    guarda_conselho()
