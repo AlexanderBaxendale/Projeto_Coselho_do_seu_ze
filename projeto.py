@@ -139,7 +139,7 @@ while escolha != 0:
                 print(f'Ocorreu um error: {erro} -  Talvez os conselhos ainda não foram gerados')
         case 6:
             try:
-                mostra_traducao = input('Aproveitando, você gostaria de salvar seus conselhos Traduzidos em um arquivo? - Digite s/n :')
+                mostra_traducao = input('Aproveitando, você gostaria de salvar seus conselhos Traduzidos em um arquivo? - Digite s/n : ')
             except ValueError:
                 print('\ndigite um valor valido\n')
                 time.sleep(0.5)
