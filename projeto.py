@@ -12,12 +12,20 @@ def obter_conselho():
         return "Erro ao obter conselho"    
 
 def gerar_conselho():
-     
+        tradutor = GoogleTranslator(source="auto", target="pt")
+        traducao = input('Gostaria de traduzir seu conselhos? - digite s/n: ')
         conselho, conselho_id = obter_conselho()
         if obter_conselho():
             conselhos.append((conselho, conselho_id))
-            print(f' ID: {conselho_id}  -  conselho: {conselho}')  
-    
+            if traducao == 's':
+                print(f' ID: {conselho_id}  -  conselho: {tradutor.translate(conselho)}')
+                conselhos_traduzidos.append(tradutor.translate(conselho))
+            elif traducao == 'n':
+                print(f' ID: {conselho_id}  -  conselho: {(conselho)}')
+            else:
+                print('valor incorreto')
+
+
     
 def guarda_conselho(conselhos):
     with open('arquivo.txt', 'w', encoding='UTF-8') as arquivo:
@@ -30,16 +38,16 @@ def menu():
     print('2 - Mostra Conselho -')
     print('3 - Guardar a Sabedoria -')
     print('4 - Mostra conselhos guardados -')
-    print('5 - Traduzir conselhos -')
-    print('6 - Traduzir conselhos salvos -')
+    print('5 - Mostra conselhos traduzidos -')
+    print('6 - Guarda conselhos Traduzidos -')
     print('7 - Sair do programa -')
     print('\n-------------------------------------------------\n')
 
 
-print('\n----------------------------------------------------------------\n')
+print('\nX----------------------------------------------------------------X\n')
 print('                 Bem-Vindo a Cachaçaria do Seu Zé!                  ')
 print('                 A Melhor cachaçaria em dar conselhos               ')
-print('\n----------------------------------------------------------------\n')
+print('\nX----------------------------------------------------------------X\n')
 
 escolha = 1000
 
@@ -52,7 +60,7 @@ while escolha != 0:
 
     match escolha:
         case 1:
-            print('\n------------> QUANTIDADE DE CONSELHOS <------------\n')
+            print('\nX------------> QUANTIDADE DE CONSELHOS <------------X\n')
             try:
                 quantidade_conselho = int(input('Quantos conselhos você quer ?: '))
             except ValueError :
@@ -61,32 +69,34 @@ while escolha != 0:
             conselhos = []
             print('\nescolha a opção 2 para ver os seu conselhos\n')
         case 2:
-            print('\n-------------> MOSTRA CONSELHO <-------------------\n')
+            print('\nX-------------> MOSTRA CONSELHO <-------------------X\n')
+            conselhos_traduzidos = []
             try:
                 for i in range(quantidade_conselho):
                     gerar_conselho()
             except Exception as erro:
-                print(f'\nOcorreu um error: {erro} ! - Por favor digite a primeiro  opção 1 antes dessa \n')
+                print(f'\nOcorreu um error: {erro} ! - Por favor digite a opção 1 antes dessa \n')
 
            
         case 3 :
-            print('\n-------------> MOSTRA CONSELHO GUARDADO <-------------------\n')
+            print('\nX-------------> MOSTRA CONSELHO GUARDADO <-------------------X\n')
             try:
                 salvar = input('Gostaria de salvar seu conselho(s) - Digite s/n :')
             except ValueError:
-                print('\nDigite um valor valido - Porfavor segua a ordem! \n')   
-              
-            if salvar == 's':
-                guarda_conselho(conselhos)
-                print('Seu Conselho está salvo!')
-            elif salvar == 'n':
-                print('Você decidio não salvar seu conselho')
-            else:
-                print('digite um valor valido')
-            
+                print('\nDigite um valor valido! \n')   
+            try:  
+                if salvar == 's':
+                    guarda_conselho(conselhos)
+                    print('Seu Conselho está salvo!')
+                elif salvar == 'n':
+                    print('Você decidio não salvar seu conselho')
+                else:
+                    print('digite um valor valido')
+            except Exception as erro :
+                print(f'Ocorreu um error : {erro} - O conselho ainda não foi gerado')
             
         case 4:
-            print('\n-------------> ABRIR LISTA DE CONSELHOS <-------------------\n')
+            print('\nX-------------> ABRIR LISTA DE CONSELHOS <-------------------X\n')
             try:
                 decicao = input('Gostaria de ver os sua lista de conselho(s) - Digite s/n :')
             except ValueError:
@@ -100,12 +110,37 @@ while escolha != 0:
                 else:
                     print('Você decidio não ver sua lista de conselho(s)')
             except FileNotFoundError:
-                print('O arquivo não foi encontrado')
+                print('Ainda não há conselhos guardados')
             
         case 5:
+            tradutor = GoogleTranslator(source='en', target='pt')
             
-            tradutor = GoogleTranslator(source="auto", target="pt")
-            print(tradutor.translate(conselhos))
+            try:
+                mostra = input('Gostaria de ver seus conselhos Traduzidos - Digite s/n :')    
+            except ValueError:
+                print('Digite uma valor valido')
+            try:
+                if mostra == 's':
+                    print(conselhos_traduzidos)
+                else:
+                    print('você decidiu não ver seus conselhos traduzidos')
+            except Exception as erro:
+                print(f'Ocorreu um error: {erro} -  Talvez os conselhos ainda não foram gerados')
+        case 6:
+            
+            try:
+                mostra_traducao = input('Aproveitando, você gostaria de salvar seus conselhos Traduzidos em um arquivo? - Digite s/n :')
+            except ValueError:
+                print('digite um valor valido')
+            try:
+                if mostra_traducao == 's':
+                    with open('arquivo.txt', 'w', encoding='UTF-8') as arquivo:
+                        for conselho, conselho_id in conselhos:
+                            arquivo.write(f'ID: {conselho_id} - {tradutor.translate(conselho)}')
+                else:
+                    print('você decidiu não salvar seus conselhos traduzidos')
+            except Exception as erro:
+                    print(f'Ocorreu um error: {erro} -  Talvez os conselhos ainda não foram gerados') 
         case 7:
             sair = input('Deseja sair do Programa - Digite s/n :')
             if sair == 's':
